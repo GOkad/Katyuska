@@ -8,4 +8,5 @@ void setup() {
 
 void loop() {
   static AppCore core(MotorControllerConfig{});
+  // core.test_movement();
 }
