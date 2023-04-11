@@ -11,7 +11,7 @@
 
 AppCore::AppCore(const MotorControllerConfig &motor_controller_config):
     m_left_motor{std::make_unique<MotorController>(4,5)},
-    m_right_motor{std::make_unique<MotorController>(0,2)},
+    m_right_motor{std::make_unique<MotorController>(15,2)},
     m_server{std::make_unique<AsyncWebServer>(80)}
 {
     init_web_server();
@@ -31,7 +31,7 @@ void AppCore::init_web_server()
         request->send(200, "text/html", html_interface);
     });
 
-    m_server->on("/update", HTTP_GET, [](AsyncWebServerRequest *request){
+    m_server->on("/update", HTTP_GET, [core = this](AsyncWebServerRequest *request){
         std::uint8_t speed = 0;
         Directions direction = Directions::STOP;
         if(request->hasParam("speed"))
@@ -53,6 +53,7 @@ void AppCore::init_web_server()
 
         Serial.println("-----------");
 
+        core->move(direction, constrain(speed, 0, 255));
 
         String response = "{\"message\":\"all good\"}";
 
@@ -63,35 +64,29 @@ void AppCore::init_web_server()
     m_server->begin();
 }
 
-void AppCore::test_movement()
+void AppCore::move(Directions direction, std::uint8_t speed)
 {
-    // Move forward
-    Serial.println("Move forward");
-    m_left_motor->forward();
-    m_right_motor->forward();
-    delay(1000);
-
-    // Move right
-    Serial.println("Move right");
-    m_left_motor->reverse();
-    m_right_motor->forward();
-    delay(1000);
-
-    // Move left
-    Serial.println("Move left");
-    m_left_motor->forward();
-    m_right_motor->reverse();
-    delay(1000);
-
-    // Move Backward
-    Serial.println("Move backward");
-    m_left_motor->reverse();
-    m_right_motor->reverse();
-    delay(1000);
-
-    Serial.println("Stop");
-    m_left_motor->stop();
-    m_right_motor->stop();
-    delay(1000);
-
+    switch(direction)
+    {
+        case Directions::STOP:
+            m_left_motor->stop();
+            m_right_motor->stop();
+            break;
+        case Directions::FORWARD:
+            m_left_motor->forward(speed);
+            m_right_motor->forward(speed);
+            break;
+        case Directions::BACKWARD:
+            m_left_motor->reverse(speed);
+            m_right_motor->reverse(speed);
+            break;
+        case Directions::LEFT:
+            m_left_motor->forward(speed);
+            m_right_motor->reverse(speed);
+            break;
+        case Directions::RIGHT:
+            m_left_motor->reverse(speed);
+            m_right_motor->forward(speed);
+            break;
+    }
 }

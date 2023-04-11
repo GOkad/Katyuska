@@ -11,8 +11,8 @@ private:
 public:
     MotorController(std::uint8_t positive_pin, std::uint8_t negative_pin);
     void stop();
-    void forward();
-    void reverse();
+    void forward(std::uint8_t speed);
+    void reverse(std::uint8_t speed);
 };
 
 #endif

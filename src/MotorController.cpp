@@ -18,13 +18,13 @@ void MotorController::stop()
     digitalWrite(m_negative_pin, LOW);
 }
 
-void MotorController::forward()
+void MotorController::forward(std::uint8_t speed)
 {
     digitalWrite(m_positive_pin, HIGH);
     digitalWrite(m_negative_pin, LOW);
 }
 
-void MotorController::reverse()
+void MotorController::reverse(std::uint8_t speed)
 {
     digitalWrite(m_positive_pin, LOW);
     digitalWrite(m_negative_pin, HIGH);
