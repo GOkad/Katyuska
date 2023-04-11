@@ -1,17 +1,33 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+            * {
+                padding:0;
+                margin:0;
+            }
+            body {
+                background:#333
+            }
+            #cont {
+                display:flex;
+                flex-flow:column;
+                row-gap:10px;
+                padding:10px;
+            }
+            span {
+                color:#fff;
+            }
+        </style>
         <script src="index.js" defer="true"></script>
     </head>
     <body>
-        <div class="columnLateral">
-            <div id="joy1Div" style="width:200px;height:200px;margin:50px"></div>
-            Posizione X:<input id="joy1PosizioneX" type="text" /><br />
-            Posizione Y:<input id="joy1PosizioneY" type="text" /><br />
-            Direzione:<input id="joy1Direzione" type="text" /><br />
-            X :<input id="joy1X" type="text" /></br>
-            Y :<input id="joy1Y" type="text" />
-        </div>
-        <a href="https://github.com/bobboteck/JoyStick">JS Joystick Repo</a>
+        <div id="joystick" style="width:200px;height:200px;margin:auto"></div>
+        <div id="cont">
+            <span id="x"></span>
+            <span id="y"></span>
+            <span id="dir"></span>
+        </div>           
     </body>
 </html>

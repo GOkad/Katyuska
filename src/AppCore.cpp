@@ -1,11 +1,13 @@
 #include <Arduino.h>
-#include "AppCore.h"
-#include "MotorControllerConfig.h"
-#include "MotorController.h"
-
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+
+#include "AppCore.h"
+#include "MotorControllerConfig.h"
+#include "MotorController.h"
+#include "Directions.h"
+#include "HTMLInterface.h"
 
 AppCore::AppCore(const MotorControllerConfig &motor_controller_config):
     m_left_motor{std::make_unique<MotorController>(4,5)},
@@ -26,9 +28,37 @@ void AppCore::init_web_server()
     Serial.println(WiFi.softAPIP().toString());
 
     m_server->on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        String response = "Hello world";
-        request->send(200, "text/html", response);
+        request->send(200, "text/html", html_interface);
     });
+
+    m_server->on("/update", HTTP_GET, [](AsyncWebServerRequest *request){
+        std::uint8_t speed = 0;
+        Directions direction = Directions::STOP;
+        if(request->hasParam("speed"))
+        {
+            speed = std::stoi(request->getParam("speed")->value().c_str());
+        }
+
+        if(request->hasParam("dir"))
+        {
+            std::uint8_t dir = std::stoi(request->getParam("dir")->value().c_str());
+            direction = static_cast<Directions>(dir);
+        }
+
+        Serial.print("Speed: ");
+        Serial.println(speed);
+
+        Serial.print("Direction: ");
+        Serial.println(direction);
+
+        Serial.println("-----------");
+
+
+        String response = "{\"message\":\"all good\"}";
+
+        request->send(200, "application/json", response);
+    });
+
 
     m_server->begin();
 }

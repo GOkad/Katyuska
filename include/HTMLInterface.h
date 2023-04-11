@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+#ifndef HTML_INTERFACE
+#define HTML_INTERFACE
+
+const char html_interface[] PROGMEM = R"rawliteral(<!DOCTYPE html>
 <html>
     <head>
         <meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -87,10 +90,15 @@
                 if( speed - old_speed >= 5 || speed - old_speed <= -5 )
                 {
                     old_speed = speed;
-                    console.log('/update?speed='+speed+'&d='+dir);
+                    fetch("/update?speed="+speed+"&dir="+dir)
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(err => console.log(err))
                 }
 
             }
         </script>         
     </body>
-</html>
+</html>)rawliteral";
+
+#endif
